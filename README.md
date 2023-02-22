@@ -1,4 +1,4 @@
-# Lab_1
+# Databases labs
 For study
 
 
