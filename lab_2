@@ -1,0 +1,24 @@
+1.	SELECT num, cod, isnew, name, price, pages FROM books2
+2.	SELECT * FROM books2
+3.	SELECT cod,name,isnew,pages,price,num FROM books2
+4.	SELECT * FROM books2 LIMIT 10
+5.	 
+6.	SELECT cod FROM books2 GROUP BY cod  
+7.	SELECT * FROM books2 WHERE isnew=1;
+8.	SELECT * FROM books2 WHERE isnew=1 AND price<=30 AND price>=20;
+9.	SELECT * FROM books2 WHERE isnew=1 AND price>=30 AND price<=20;
+10.	SELECT * FROM books2 WHERE pages>=300 AND pages<=400 AND price<=30 AND price>=20;
+11.	SELECT * FROM books2 WHERE isdate BETWEEN '2000-01-01' AND '2000-02-28' AND  '2000-12-01' AND '2000-12-31';
+12.	SELECT * FROM books2 WHERE cod = 5110 OR cod = 5141 OR cod = 4985 OR cod = 4241;
+13.	 
+SELECT * FROM books2 WHERE isdate BETWEEN '1999-01-01' AND '1999-12-31';
+      SELECT * FROM books2 WHERE isdate BETWEEN '2001-01-01' AND '2001-12-31';
+SELECT * FROM books2 WHERE isdate BETWEEN '2003-01-01' AND '2003-12-31';
+SELECT * FROM books2 WHERE isdate BETWEEN '2005-01-01' AND '2005-12-31';
+14.	 SELECT * FROM books2 WHERE name LIKE 'А%' OR 'К%';
+15.	SELECT * FROM books2 WHERE name LIKE 'Апп%' AND isdate BETWEEN '2000-01-01' AND '2000-12-31' AND price <=20;
+16.	SELECT * FROM books2 WHERE name LIKE 'Апп%' OR name LIKE '%е'AND isdate BETWEEN '2000-01-01' AND '2000-06-30';
+17.	SELECT * FROM books2 WHERE  name LIKE '%Microsoft%' AND NOT name LIKE '%Windows%';
+18.	SELECT * FROM books2 WHERE name REGEXP '[0-9]';
+19.	SELECT * FROM books2 WHERE name REGEXP '[0-9]{3,}';
+20.	SELECT * FROM books2 WHERE name REGEXP '[0-9]{5}';
