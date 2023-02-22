@@ -1,3 +1,5 @@
+//Бази данних,Лабораторна 2.Тут записано команди для виконання завдань під певним номером,що вказані у документі із завданнями
+
 1.	SELECT num, cod, isnew, name, price, pages FROM books2
 2.	SELECT * FROM books2
 3.	SELECT cod,name,isnew,pages,price,num FROM books2
