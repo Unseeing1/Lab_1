@@ -1,0 +1,29 @@
+SELECT COUNT(*), SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2
+2. SELECT SUM(circulation) FROM books2
+WHERE(price>0)
+3.  SELECT SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2
+WHERE isnew = 1/0
+4. SELECT COUNT(*),EXTRACT(year from isdate) , SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by year(isdate)
+5. SELECT COUNT(*),EXTRACT(year from isdate) , SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by year(isdate)
+WHERE price > 10 AND price < 20
+6. SELECT COUNT(*),EXTRACT(year from isdate) , SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by year(isdate) ORDER BY DESC
+7. SELECT COUNT(cod), COUNT(DISTINCT cod) FROM books2
+8. SELECT LEFT(name,1), COUNT(LEFT(name,1)), SUM(price) from books2 GROUP by LEFT(name,1);
+9. SELECT LEFT(name,1), COUNT(LEFT(name,1)), SUM(price) FROM books2 
+WHERE LEFT(name,1) REGEXP '[^A-Za-z0-9]' GROUP BY LEFT(name,1);
+10. SELECT LEFT(name,1),EXTRACT(year from isdate),COUNT(LEFT(name,1)), SUM(price) FROM books2 
+WHERE LEFT(name,1) REGEXP '[^A-Za-z0-9]'AND EXTRACT(year from isdate) > 2000 GROUP BY LEFT(name,1);
+11. SELECT LEFT(name,1),EXTRACT(year from isdate),COUNT(LEFT(name,1)), SUM(price) FROM books2 
+WHERE LEFT(name,1) REGEXP '[^A-Za-z0-9]'AND EXTRACT(year from isdate) > 2000 GROUP BY LEFT(name,1) ORDER by LEFT(name,1) DESC;
+12. SELECT COUNT(*),isdate, SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP BY EXTRACT(month from isdate)
+13. SELECT COUNT(*),isdate, SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 
+WHERE isdate IS NOT NULL GROUP BY EXTRACT(month from isdate
+14. SELECT COUNT(*),isdate, SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP BY EXTRACT(month from isdate) 
+ORDER by EXTRACT(year from isdate)DESC, EXTRACT(month from isdate) ASC;
+15. SELECT isnew as "Код", SUM(price) as "Загальна ціна", CONCAT(SUM(price*36.74),'₴') as "Ціна в гривнях",CONCAT(SUM(price*0.93),'€') as "Ціна в євро" FROM books2 GROUP by isnew
+16. SELECT isnew as "Код", ROUND(SUM(price)) as "Загальна ціна", ROUND(CONCAT(SUM(price*36.74),'₴')) as "Ціна в гривнях",ROUND(CONCAT(SUM(price*0.93),'€')) as "Ціна в євро" FROM books2 GROUP by isnew
+17. SELECT publisher, COUNT(*), SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by publisher
+18. SELECT publisher,topic, COUNT(*), SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by publisher
+19. SELECT publisher,topic,category, COUNT(*), SUM(circulation), price, AVG(price), MIN(price), MAX(price) FROM books2 GROUP by publisher,topic,category
+20. SELECT publisher FROM books2
+WHERE price*36.74/pages >0.1;
