@@ -1,0 +1,68 @@
+SELECT books.book_name, books.price, publishers.publisher_name
+FROM books
+INNER JOIN publishers ON books.publisher_id = publishers.id
+WHERE <condition>;
+2. SELECT books.book_name, categories.category_name
+FROM books
+INNER JOIN categories ON books.category_id = categories.category_id;
+3. SELECT books.book_name, books.price, publishers.publisher_name, formats.format_name
+FROM books
+INNER JOIN publishers ON books.publisher_id = publishers.publisher_id
+INNER JOIN formats ON books.format_id = formats.format_id;
+4. SELECT themes.theme_name, categories.category_name, books.book_name, publishers.publisher_name
+FROM books
+INNER JOIN publishers ON books.publisher_id = publishers.publisher_id
+INNER JOIN themes ON books.theme_id = themes.theme_id
+INNER JOIN categories ON books.category_id = categories.category_id
+WHERE themes.theme_name = '<theme>' AND categories.category_name = '<category>';
+5. SELECT * FROM `books2` WHERE publisher REGEXP '[BHV]' AND EXTRACT(year from isdate)>2000;
+6.  SELECT category, SUM(pages) FROM books2 GROUP BY category ORDER BY category DESC
+7. SELECT category,topic, AVG(price) 
+FROM books2 
+WHERE topic LIKE '%Використання ПК%' AND category LIKE '%Linux%';
+8. 
+9.
+10.
+11. SELECT * 
+FROM books2 b1
+JOIN books2 b2 ON b1.pages = b2.pages
+WHERE b1.cod <> b2.cod
+12. SELECT * 
+FROM books2 b1
+JOIN books2 b2 ON b1.price = b2.price
+JOIN books2 b3 ON b1.price = b3.price
+WHERE b1.cod <> b2.cod AND b1.cod <> b3.cod AND b2.cod <> b3.cod;
+13. SELECT * 
+FROM books2
+WHERE (SELECT category LIKE '%C++%')
+14. SELECT * 
+FROM books2
+WHERE (SELECT publisher LIKE '%BHV%' AND EXTRACT(year from isdate) >= 2000)
+15. SELECT publisher, pages
+FROM books2
+WHERE pages IN (
+    SELECT pages
+    FROM books2
+    WHERE pages > 400
+);
+16. SELECT b1.category
+FROM books2 b1
+WHERE (
+    SELECT COUNT(*)
+    FROM books2 b2
+    WHERE b2.category = b1.category
+) > 3;
+17. SELECT * FROM `books2` 
+WHERE publisher = 'Видавнича група BHV' AND EXISTS (SELECT * FROM books2 WHERE publisher = 'Видавнича група BHV');
+18. SELECT * FROM `books2` 
+WHERE publisher = 'Видавнича група BHV' AND NOT EXISTS (SELECT * FROM books2 WHERE publisher = 'Видавнича група BHV');
+19. SELECT topic, category
+FROM books2
+UNION
+SELECT topic, category
+FROM books2
+20. SELECT DISTINCT REVERSE(SUBSTRING_INDEX(name, ' ', 1))
+FROM books2
+UNION
+SELECT DISTINCT REVERSE(SUBSTRING_INDEX(category, ' ', 1)) 
+FROM books2
