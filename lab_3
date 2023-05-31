@@ -1,0 +1,27 @@
+1.	SELECT * FROM books2 WHERE price=NULL OR price = 0;
+2.	SELECT * FROM books2 WHERE circulation=NULL AND price != NULL;
+3.	SELECT * FROM books2 WHERE isdate=NULL;
+4.	SELECT * FROM books2 WHERE (CURRENT_DATE-isdate)<365;
+5.	SELECT * FROM books2 WHERE isnew = 1 ORDER BY price;
+6.	SELECT * FROM books2 WHERE (pages<400) AND (pages>300) ORDER BY name DESC;
+7.	SELECT * FROM `books2` WHERE (price>20) OR (price<40) ORDER BY isdate DESC
+8.	SELECT * FROM `books2`ORDER BY name, price DESC
+9.	SELECT * FROM `books2`WHERE (price/pages) <0.1;
+10.	SELECT length (name),UPPER(SUBSTRING(name, 1,20)) FROM books2;
+11.	SELECT name, UPPER(SUBSTRING(name, 1,10)), '...', UPPER(SUBSTRING(name,-10)) FROM books2;
+12.	SELECT name,DATE_FORMAT(isdate, ' "%d","%m", "%Y" ') FROM books2;
+13.	SELECT name,DATE_FORMAT(isdate, ' "%d","%m", "%Y" ') FROM books2;
+14.	 1) SELECT cod,CONCAT(price,'₴') FROM books2;  2) SELECT cod,CONCAT(price,'€') FROM books2;
+15.	SELECT cod,CONCAT(CAST(price as INT),'₴') FROM books2;
+16.	INSERT INTO books2(num,isnew,name,price,publisher,pages,format,isdate,circulation,topic,category,cod) 
+VALUES('322',0,'Нос',25.23,'ДМК',64,'70x100/16',2000-07-12,5000,'Повість','Література',228)
+17.  INSERT INTO books2(num,isnew,name,price,publisher,pages,format,isdate,circulation,topic,category,cod) 
+VALUES('322',0,'Нос',25.23,'ДМК',64,'70x100/16',2000-07-12,5000,'Повість','Література',228)
+18. DELETE FROM books2
+WHERE DATE_FORMAT(isdate, '%Y-%m-%d') LIKE '1990-%'
+19. UPDATE books2
+SET isdate = '2000-07-15' 
+WHERE isdate = '0000-00-0'
+20. UPDATE books2
+SET isnew = 1 
+WHERE DATE_FORMAT(isdate,'%Y-%m-%d') = '2005-%'
