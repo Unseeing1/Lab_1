@@ -1,0 +1,179 @@
+1.DELIMITER //
+CREATE TRIGGER check_topic_count
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE topic_count INT;
+    SELECT COUNT(*) INTO topic_count FROM books2 WHERE topic IS NOT NULL AND topic != '';
+
+    IF topic_count < 5 OR topic_count > 10 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Количество тем должно быть от 5 до 10';
+    END IF;
+END //
+DELIMITER ;
+
+
+2. DELIMITER //
+CREATE TRIGGER check_new_release
+BEFORE UPDATE ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE release_year INT;
+    DECLARE current_year INT;
+    
+    IF NEW.isnew = 1 THEN
+        SET release_year = YEAR(NEW.isdate);
+        SET current_year = YEAR(CURDATE());
+
+        IF release_year != current_year THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Новинкою може бути тільки книга видана в поточному році';
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+
+3. DELIMITER //
+CREATE TRIGGER check_price_based_on_pages
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE book_pages INT;
+    DECLARE book_price DECIMAL(8,2);
+    
+    SET book_pages = NEW.pages;
+    SET book_price = NEW.price;
+    
+    IF book_pages <= 100 AND book_price > 10 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книга з кількістю сторінок до 100 не може коштувати більше 10 $';
+    ELSEIF book_pages <= 200 AND book_price > 20 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книга з кількістю сторінок до 200 не може коштувати більше 20 $';
+    ELSEIF book_pages <= 300 AND book_price > 30 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книга з кількістю сторінок до 300 не може коштувати більше 30 $';
+    END IF;
+END //
+DELIMITER ;
+
+
+4. DELIMITER //
+CREATE TRIGGER check_circulation_based_on_publisher
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE book_circulation INT;
+    DECLARE book_publisher VARCHAR(255);
+    
+    SET book_circulation = NEW.circulation;
+    SET book_publisher = NEW.publisher;
+    
+    IF book_publisher = 'BHV' AND book_circulation < 5000 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Видавництво "BHV" не випускає книги накладом меншим 5000';
+    ELSEIF book_publisher = 'Diasoft' AND book_circulation < 10000 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Видавництво Diasoft не випускає книги накладом меншим 10000';
+    END IF;
+END //
+DELIMITER ;
+
+
+5. DELIMITER //
+CREATE TRIGGER check_duplicate_code_data
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE duplicate_count INT;
+    
+    SELECT COUNT(*) INTO duplicate_count FROM books2 WHERE cod = NEW.cod AND (name != NEW.name OR isnew != NEW.isnew OR topic != NEW.topic OR price != NEW.price OR publisher != NEW.publisher OR pages != NEW.pages OR format != NEW.format OR isdate != NEW.isdate OR circulation != NEW.circulation OR category != NEW.category);
+    IF duplicate_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Книги з однаковим кодом повинні мати однакові дані';
+    END IF;
+END //
+DELIMITER;
+
+
+6. DELIMITER //
+CREATE TRIGGER delete_book
+BEFORE DELETE ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE deleted_rows INT;
+    DECLARE curent_user VARCHAR(255);
+    DECLARE error_message VARCHAR(255);
+    
+    SET curent_user = USER();
+    
+    IF curent_user <> 'dbo' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'У вас немає прав для видалення книг';
+    ELSE
+        DELETE FROM books2 WHERE cod = OLD.cod;
+        SET deleted_rows = ROW_COUNT();
+        SET error_message = CONCAT('Кількість видалених рядків: ', deleted_rows);
+        SIGNAL SQLSTATE '01000' SET MESSAGE_TEXT = error_message;
+    END IF;
+END //
+DELIMITER ;
+
+
+7. DELIMITER //
+CREATE TRIGGER check_price_update
+BEFORE UPDATE ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE curent_user VARCHAR(255);
+    
+    SET curent_user = USER();
+    
+    IF curent_user = 'dbo' AND NEW.price <> OLD.price THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Користувач "dbo" не має права змінювати ціну книги';
+    END IF;
+END //
+DELIMITER ;
+
+
+8. DELIMITER //
+CREATE TRIGGER check_publisher
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    IF NEW.publisher IN ('ДМК', 'Еком') AND NEW.topic = 'підручник' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Видавництва ДМК і Еком не видають підручники';
+    END IF;
+END //
+DELIMITER ;
+
+
+9. DELIMITER //
+CREATE TRIGGER check_new_books
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    DECLARE current_month INT;
+    DECLARE current_year INT;
+    DECLARE new_books_count INT;
+    
+    SET current_month = MONTH(CURRENT_DATE());
+    SET current_year = YEAR(CURRENT_DATE());
+    
+    SELECT COUNT(*) INTO new_books_count
+    FROM books2
+    WHERE publisher = NEW.publisher
+      AND YEAR(isdate) = current_year
+      AND MONTH(isdate) = current_month
+      AND isnew = true;
+    
+    IF new_books_count >= 10 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Видавництво не може випустити більше 10 новинок протягом одного місяця поточного року';
+    END IF;
+END //
+DELIMITER ;
+
+
+10. DELIMITER //
+CREATE TRIGGER check_book_format
+BEFORE INSERT ON books2
+FOR EACH ROW
+BEGIN
+    IF NEW.publisher = 'BHV' AND NEW.format = '60х88 / 16' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Видавництво BHV не випускає книги формату 60х88 / 16';
+    END IF;
+END //
+DELIMITER ;
