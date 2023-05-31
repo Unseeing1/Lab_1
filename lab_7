@@ -1,0 +1,43 @@
+SELECT name,price,publisher,format FROM books2
+2. SELECT topic,category,name,publisher FROM books2 GROUP BY topic,category
+3. SELECT *
+FROM books2 
+WHERE publisher LIKE '%BHV%' AND EXTRACT(year FROM isdate) >= 2000;
+4. SELECT category, SUM(pages) FROM books2 GROUP BY category
+5. SELECT topic,category, AVG(price) FROM books2
+WHERE topic LIKE '%Використання ПК%' AND category ='Linux'
+6. 
+7. SELECT * 
+FROM books2 b1
+JOIN books2 b2 ON b1.pages = b2.pages
+WHERE b1.cod <> b2.cod
+8. SELECT * 
+FROM books2 b1
+JOIN books2 b2 ON b1.price = b2.price
+JOIN books2 b3 ON b1.price = b3.price
+WHERE b1.cod <> b2.cod AND b1.cod <> b3.cod AND b2.cod <> b3.cod;
+9. SELECT * FROM books2
+WHERE category LIKE '%C++%'
+10. SELECT publisher, pages FROM books2
+WHERE pages> 400;
+11 SELECT b1.category
+FROM books2 b1
+WHERE (
+    SELECT COUNT(*)
+    FROM books2 b2
+    WHERE b2.category = b1.category
+) > 3;
+12. SELECT * FROM `books2` 
+WHERE publisher = 'Видавнича група BHV' AND EXISTS (SELECT * FROM books2 WHERE publisher = 'Видавнича група BHV');
+13. SELECT * FROM `books2` 
+WHERE publisher = 'Видавнича група BHV' AND NOT EXISTS (SELECT * FROM books2 WHERE publisher = 'Видавнича група BHV');
+14. SELECT topic, category
+FROM books2
+UNION
+SELECT topic, category
+FROM books2
+15. SELECT DISTINCT REVERSE(SUBSTRING_INDEX(name, ' ', 1))
+FROM books2
+UNION
+SELECT DISTINCT REVERSE(SUBSTRING_INDEX(category, ' ', 1)) 
+FROM books2
