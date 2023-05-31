@@ -1,0 +1,125 @@
+1. DELIMITER //
+CREATE FUNCTION calculate_total_cost(year INT)
+RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE total_cost DECIMAL(10, 2);
+    
+    SELECT SUM(price) INTO total_cost
+    FROM books2
+    WHERE YEAR(isdate) = year;
+    
+    IF total_cost IS NULL THEN
+        SET total_cost = 0.00;
+    END IF;
+    
+    RETURN total_cost;
+END;//
+DELIMITER ;
+
+
+2. DELIMITER //
+CREATE FUNCTION get_books_by_year(year INT)
+RETURNS VARCHAR(255)
+BEGIN
+    DECLARE book_list VARCHAR(255);
+    
+    SELECT GROUP_CONCAT(name SEPARATOR ', ')
+    INTO book_list
+    FROM books2
+    WHERE YEAR(isdate) = year;
+    
+    IF book_list IS NULL THEN
+        SET book_list = 'No books found for the specified year.';
+    END IF;
+    
+    RETURN book_list;
+END; //
+DELIMITER ;
+
+
+3. DELIMITER //
+
+CREATE FUNCTION generate_publisher_list(publisher_list VARCHAR(255))
+RETURNS VARCHAR(500)
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    DECLARE publisher VARCHAR(100);
+    DECLARE formatted_list VARCHAR(500) DEFAULT '';
+
+    WHILE i <= LENGTH(publisher_list) DO
+        IF SUBSTRING(publisher_list, i, 1) = ';' THEN
+            SET i = i + 1;
+        ELSE
+            SET publisher = '';
+            WHILE i <= LENGTH(publisher_list) AND SUBSTRING(publisher_list, i, 1) != ';' DO
+                SET publisher = CONCAT(publisher, SUBSTRING(publisher_list, i, 1));
+                SET i = i + 1;
+            END WHILE;
+            SET formatted_list = CONCAT(formatted_list, CONCAT(i-1, '. ', publisher, '\n'));
+        END IF;
+    END WHILE;
+
+    RETURN formatted_list;
+END //
+
+DELIMITER ;
+
+
+4. DELIMITER //
+
+CREATE PROCEDURE process_books()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE name VARCHAR(255);
+    DECLARE publisher VARCHAR(255);
+    DECLARE book_cursor CURSOR FOR SELECT name, publisher FROM books2;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN book_cursor;
+    read_loop: LOOP
+        FETCH book_cursor INTO name, publisher;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        SELECT CONCAT('Book Name: ', name, ', Publisher: ', publisher);
+    END LOOP;
+    CLOSE book_cursor;
+END //
+
+DELIMITER ;
+
+
+5. 1)CLOSE book_cursor;
+DEALLOCATE book_cursor;
+
+
+
+
+2)DELIMITER //
+
+CREATE PROCEDURE process_books_by_year(IN selected_year INT)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE name VARCHAR(255);
+    DECLARE year_of_publication DATE;
+    DECLARE book_cursor CURSOR FOR SELECT name, isdate FROM books2;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN book_cursor;
+    read_loop: LOOP
+        FETCH book_cursor INTO name, year_of_publication;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF YEAR(year_of_publication) = selected_year THEN
+
+            SELECT name;
+        END IF;
+    END LOOP;
+    CLOSE book_cursor;
+END //
+
+DELIMITER ;
+
